@@ -1,0 +1,65 @@
+.ui-tabs {
+    padding: 0;
+    margin-top: 10px;
+    border: 0;
+    border-radius: 0;
+  }
+  
+  .ui-tabs .ui-tabs-nav {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color: #f8f9fa;
+    border-bottom: 0;
+    margin-left: auto;
+    flex-grow: 1;
+  }
+  
+  .ui-tabs .ui-tabs-nav li {
+    margin: 0;
+  }
+  
+  .ui-tabs .ui-tabs-nav li a {
+    display: block;
+    padding: .5rem 1rem;
+    color: #495057;
+    font-size: .875rem;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    position: relative;
+    border-bottom: 1px solid #dee2e6;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
+  }
+  
+  .ui-tabs .ui-tabs-nav li a:hover {
+    color: #0d6efd;
+  }
+  
+  .ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+  .ui-tabs .ui-tabs-nav li.ui-tabs-selected a {
+    color: #0d6efd;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+    padding: .5rem 1rem;
+    
+  }
+  
+  .ui-tabs .ui-tabs-nav li.required a {
+    font-weight: 600;
+  }
+  
+  .ui-tabs .ui-tab-has-errors a::after {
+    content: "●";
+    color: #dc3545;
+    font-size: 1rem;
+    margin-left: .25rem;
+  }
+  
+  .ui-tabs .ui-tabs-panel {
+    padding-top: 1rem;
+    background-color: transparent;
+    border: 0;
+  }

@@ -1,0 +1,45 @@
+name: Deploy to SSH Server
+
+on:
+  push:
+    branches: [ main, dev ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+          if_key_exists: replace
+
+      # === MAIN branch deploy ===
+      - name: Deploy prod
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'EOF'
+            cd ${{ secrets.PROJECT_PATH }}
+            git pull origin main
+            docker compose -f prod.yml down
+            docker compose -f prod.yml up -d --build
+          EOF
+
+      # === DEV branch deploy ===
+      - name: Deploy dev
+        if: ${{ github.ref == 'refs/heads/dev' }}
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'EOF'
+            cd ${{ secrets.PROJECT_PATH_DEV }}
+            git pull origin dev
+            docker compose -f dev.yml down
+            docker compose -f dev.yml up -d --build
+          EOF

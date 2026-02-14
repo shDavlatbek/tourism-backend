@@ -1,0 +1,89 @@
+services:
+  web:
+    container_name: bmsb-backend
+    build: .
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./static:/app/static
+      - ./media:/app/media
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=db
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres:16
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    # ports:
+    #   - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  imgproxy:
+    image: ghcr.io/imgproxy/imgproxy:latest
+    container_name: bmsb-imgproxy
+    restart: always
+    environment:
+      # Disable signature checking completely (no IMGPROXY_KEY or IMGPROXY_SALT)
+      # This enables true insecure mode
+      
+      # Automatic format detection based on Accept header
+      - IMGPROXY_ENABLE_WEBP_DETECTION=true
+      - IMGPROXY_ENABLE_AVIF_DETECTION=true
+      
+      # Performance settings
+      - IMGPROXY_MAX_SRC_DIMENSION=8192
+      - IMGPROXY_QUALITY=85
+      - IMGPROXY_JPEG_PROGRESSIVE=true
+      - IMGPROXY_PNG_INTERLACED=true
+      
+      # Security settings  
+      - IMGPROXY_MAX_SRC_FILE_SIZE=50000000  # 50MB max source file
+      - IMGPROXY_ALLOWED_SOURCES=https://*.e-bmsm.uz/
+      
+      # Caching and performance
+      - IMGPROXY_CACHE_CONTROL_PASSTHROUGH=true
+      - IMGPROXY_USE_ETAG=true
+      - IMGPROXY_TTL=2592000  # 30 days cache
+      - IMGPROXY_GZIP_COMPRESSION=6
+      - IMGPROXY_WORKERS=${IMGPROXY_WORKERS:-4}
+      
+      # Remove watermark
+      - IMGPROXY_WATERMARK_OPACITY=0.0000001
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./media:/usr/src/app/media:ro  # Read-only access to media files
+
+  # nginx:
+  #   image: nginx:alpine
+  #   restart: always
+  #   depends_on:
+  #     - web
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx/conf.d:/etc/nginx/conf.d
+  #     - ./static:/app/static
+  #     - ./media:/app/media
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

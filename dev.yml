@@ -1,0 +1,66 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: always
+    volumes:
+      - .:/app  # Mount the current directory into /app for live code changes
+      - ./static:/app/static
+      - ./media:/app/media
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.develop
+    ports:
+      - "8020:8020"
+
+  imgproxy:
+    image: ghcr.io/imgproxy/imgproxy:latest
+    restart: always
+    environment:
+      # Disable signature checking completely (no IMGPROXY_KEY or IMGPROXY_SALT)
+      # This enables true insecure mode
+      
+      # Automatic format detection
+      - IMGPROXY_AUTO_WEBP=true
+      - IMGPROXY_AUTO_AVIF=true
+      
+      # Performance settings
+      - IMGPROXY_MAX_SRC_DIMENSION=8192
+      - IMGPROXY_QUALITY=85
+      - IMGPROXY_JPEG_PROGRESSIVE=true
+      - IMGPROXY_PNG_INTERLACED=true
+      
+      # Security settings
+      - IMGPROXY_MAX_SRC_FILE_SIZE=50000000  # 50MB max source file
+      - IMGPROXY_ALLOWED_SOURCES=https://*.e-bmsm.uz/,localhost,127.0.0.1
+      
+      # Caching
+      - IMGPROXY_CACHE_CONTROL_PASSTHROUGH=true
+      - IMGPROXY_USE_ETAG=true
+      - IMGPROXY_TTL=2592000  # 30 days cache
+      
+      # Optional: Remove watermark
+      - IMGPROXY_WATERMARK_OPACITY=0.0000001
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./media:/usr/src/app/media:ro  # Read-only access to media files
+
+  # nginx:
+  #   image: nginx:alpine
+  #   restart: always
+  #   depends_on:
+  #     - web
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx/conf.d/dev.conf:/etc/nginx/conf.d/default.conf
+  #     - static_volume:/app/static
+  #     - media_volume:/app/media
+  #     - .:/app  # Share the code with nginx for access to static files during development
+
+volumes:
+  static_volume:
+  media_volume: 

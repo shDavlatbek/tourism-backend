@@ -1,0 +1,23 @@
+asgiref==3.8.1
+Django==5.2.1
+django-cleanup==9.0.0
+django-cors-headers==4.7.0
+django-environ==0.12.0
+django-filter==25.1
+django-jazzmin==3.0.1
+django-js-asset==3.1.2
+django-modeltranslation==0.19.14
+django-mptt==0.17.0
+djangorestframework==3.16.0
+drf-yasg==1.21.10
+inflection==0.5.1
+packaging==25.0
+pillow==11.2.1
+pytz==2025.2
+PyYAML==6.0.2
+sqlparse==0.5.3
+tzdata==2025.2
+uritemplate==4.1.1
+
+# Note: Imgproxy is handled as a Docker service, not a Python dependency
+# See docker-compose files for imgproxy configuration
