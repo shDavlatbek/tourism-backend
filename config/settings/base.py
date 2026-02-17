@@ -44,7 +44,7 @@ MY_APPS = [
 
 
 THIRD_APPS = [
-    'mptt',
+    'adminsortable2',
     'rest_framework',
     'drf_yasg',
     'corsheaders',

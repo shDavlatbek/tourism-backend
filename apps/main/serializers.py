@@ -48,7 +48,7 @@ class CityDetailSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'slug', 'short_description', 'villages')
 
     def get_villages(self, obj):
-        villages = obj.villages.active().order_by('tree_id', 'lft')
+        villages = obj.villages.active().order_by('order')
         return VillageListSerializer(villages, many=True, context=self.context).data
 
 
@@ -92,11 +92,11 @@ class VillageDetailSerializer(serializers.ModelSerializer):
         )
 
     def get_gallery(self, obj):
-        qs = obj.gallery.active().order_by('tree_id', 'lft')
+        qs = obj.gallery.active().order_by('order')
         return GallerySerializer(qs, many=True, context=self.context).data
 
     def get_comments(self, obj):
-        qs = obj.comments.active().order_by('tree_id', 'lft')
+        qs = obj.comments.active().order_by('order')
         return CommentSerializer(qs, many=True, context=self.context).data
 
 

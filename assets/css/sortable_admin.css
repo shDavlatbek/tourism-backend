@@ -1,0 +1,11 @@
+th.field-_reorder_,
+td.field-_reorder_ {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+}
+
+/* при необходимости уменьшаем сам drag-handle */
+td.field-_reorder_ .drag.handle {
+    width: 20px;
+}

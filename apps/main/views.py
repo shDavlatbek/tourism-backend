@@ -11,11 +11,11 @@ from . import models, serializers
 # ──────────────────────────────────────────────
 
 class CityListView(ListAPIView):
-    """List all active cities ordered by MPTT tree position."""
+    """List all active cities ordered by position."""
     serializer_class = serializers.CityListSerializer
 
     def get_queryset(self):
-        return models.City.objects.active().order_by('tree_id', 'lft')
+        return models.City.objects.active().order_by('order')
 
 
 class CityDetailView(RetrieveAPIView):
@@ -38,7 +38,7 @@ class VillageListView(ListAPIView):
     filterset_fields = ['city']
 
     def get_queryset(self):
-        return models.Village.objects.active().select_related('city').order_by('tree_id', 'lft')
+        return models.Village.objects.active().select_related('city').order_by('order')
 
 
 class VillageDetailView(RetrieveAPIView):
