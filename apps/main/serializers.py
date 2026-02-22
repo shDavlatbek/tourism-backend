@@ -10,6 +10,7 @@ class ImgproxyImageField(serializers.ImageField):
 
     def __init__(self, *args, imgproxy_options=None, **kwargs):
         self.imgproxy_options = imgproxy_options or {}
+        self.imgproxy_options.setdefault('format', 'webp')
         super().__init__(*args, **kwargs)
 
     def to_representation(self, value):
@@ -24,7 +25,7 @@ class ImgproxyImageField(serializers.ImageField):
 
         return {
             'original': original_url,
-            'optimized': build_imgproxy_url(original_url, **self.imgproxy_options),
+            'optimized': build_imgproxy_url(f"local:///{value.name}", **self.imgproxy_options),
         }
 
 
@@ -58,14 +59,15 @@ class CityDetailSerializer(serializers.ModelSerializer):
 
 class VillageListSerializer(serializers.ModelSerializer):
     city_name = serializers.CharField(source='city.name', read_only=True)
+    image = ImgproxyImageField(imgproxy_options={'quality': 80, 'width': 1200})
 
     class Meta:
         model = models.Village
-        fields = ('id', 'name', 'slug', 'short_description', 'city', 'city_name', 'latitude', 'longitude')
+        fields = ('id', 'name', 'slug', 'short_description', 'city', 'city_name', 'latitude', 'longitude', 'image', 'seo_tags', 'activities')
 
 
 class GallerySerializer(serializers.ModelSerializer):
-    image = ImgproxyImageField(imgproxy_options={'quality': 85})
+    image = ImgproxyImageField(imgproxy_options={'quality': 60, 'width': 800})
 
     class Meta:
         model = models.Gallery
@@ -80,6 +82,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class VillageDetailSerializer(serializers.ModelSerializer):
     city_name = serializers.CharField(source='city.name', read_only=True)
+    image = ImgproxyImageField(imgproxy_options={'quality': 90})
     gallery = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
 
@@ -88,6 +91,7 @@ class VillageDetailSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'name', 'slug', 'short_description', 'description',
             'city', 'city_name', 'latitude', 'longitude',
+            'image', 'seo_tags', 'activities',
             'gallery', 'comments',
         )
 

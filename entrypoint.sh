@@ -3,30 +3,30 @@
 set -e
 
 # Function to check if postgres is ready
-postgres_ready() {
-  python << END
-import sys
-import psycopg2
-try:
-    conn = psycopg2.connect(
-        dbname="${DB_NAME}",
-        user="${DB_USER}",
-        password="${DB_PASSWORD}",
-        host="${DB_HOST}",
-        port="${DB_PORT}",
-    )
-except psycopg2.OperationalError:
-    sys.exit(1)
-sys.exit(0)
-END
-}
+# postgres_ready() {
+#   python << END
+# import sys
+# import psycopg2
+# try:
+#     conn = psycopg2.connect(
+#         dbname="${DB_NAME}",
+#         user="${DB_USER}",
+#         password="${DB_PASSWORD}",
+#         host="${DB_HOST}",
+#         port="${DB_PORT}",
+#     )
+# except psycopg2.OperationalError:
+#     sys.exit(1)
+# sys.exit(0)
+# END
+# }
 
 # Wait for postgres to become available
-until postgres_ready; do
-  echo "Waiting for PostgreSQL to become available..."
-  sleep 2
-done
-echo "PostgreSQL is available"
+# until postgres_ready; do
+#   echo "Waiting for PostgreSQL to become available..."
+#   sleep 2
+# done
+# echo "PostgreSQL is available"
 
 # Apply database migrations
 echo "Applying database migrations..."

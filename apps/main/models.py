@@ -31,6 +31,11 @@ class City(SlugifyMixin, BaseModel):
 # ──────────────────────────────────────────────
 
 class Village(SlugifyMixin, BaseModel):
+    image = models.ImageField(
+        upload_to=generate_upload_path,
+        validators=[file_size],
+        verbose_name=_("Rasm"),
+    )
     name = models.CharField(max_length=255, verbose_name=_("Nomi"))
     slug = models.SlugField(max_length=255, unique=True, blank=True, allow_unicode=True, verbose_name=_("Slug"))
     short_description = models.TextField(blank=True, default="", verbose_name=_("Qisqa tavsif"))
@@ -44,6 +49,8 @@ class Village(SlugifyMixin, BaseModel):
     city = models.ForeignKey(
         City, on_delete=models.CASCADE, related_name='villages', verbose_name=_("Shahar"),
     )
+    seo_tags = models.JSONField(default=list, blank=True, verbose_name=_("SEO taglar"))
+    activities = models.JSONField(default=list, blank=True, verbose_name=_("Faoliyatlar"))
     order = models.PositiveIntegerField(default=0, db_index=True, verbose_name=_("Tartib"))
 
     class Meta:

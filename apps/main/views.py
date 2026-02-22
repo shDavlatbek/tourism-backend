@@ -1,7 +1,8 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from . import models, serializers
 
@@ -32,13 +33,29 @@ class CityDetailView(RetrieveAPIView):
 # ──────────────────────────────────────────────
 
 class VillageListView(ListAPIView):
-    """List all active villages. Filter by `city` query param."""
+    """List all active villages. Filter by city slug via `?city=<slug>`."""
     serializer_class = serializers.VillageListSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['city']
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'city',
+                openapi.IN_QUERY,
+                description="Filter villages by city slug (e.g. `samarqand`)",
+                type=openapi.TYPE_STRING,
+            ),
+        ],
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return models.Village.objects.active().select_related('city').order_by('order')
+        qs = models.Village.objects.active().select_related('city').order_by('order')
+        city_slug = self.request.query_params.get('city')
+        if city_slug:
+            qs = qs.filter(city__slug=city_slug)
+            
+        return qs
 
 
 class VillageDetailView(RetrieveAPIView):
@@ -57,6 +74,9 @@ class VillageDetailView(RetrieveAPIView):
 class MainSettingsView(APIView):
     """Retrieve singleton site settings."""
 
+    @swagger_auto_schema(
+        responses={200: serializers.MainSettingsSerializer()},
+    )
     def get(self, request):
         settings_obj = models.MainSettings.load()
         serializer = serializers.MainSettingsSerializer(settings_obj, context={'request': request})

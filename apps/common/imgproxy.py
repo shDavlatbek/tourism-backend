@@ -27,7 +27,7 @@ class SimpleImgproxyUrlBuilder:
         resize_type: str = 'fit',
         enlarge: bool = False,
         quality: int = None,
-        format: str = None,
+        format: str = 'webp',
         **kwargs
     ) -> str:
         """
