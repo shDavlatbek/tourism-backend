@@ -82,7 +82,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class VillageDetailSerializer(serializers.ModelSerializer):
     city_name = serializers.CharField(source='city.name', read_only=True)
-    image = ImgproxyImageField(imgproxy_options={'quality': 90})
+    image = ImgproxyImageField(imgproxy_options={'quality': 90, 'width': 1200})
     gallery = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
 
@@ -109,7 +109,7 @@ class VillageDetailSerializer(serializers.ModelSerializer):
 # ──────────────────────────────────────────────
 
 class MainSettingsSerializer(serializers.ModelSerializer):
-    bg_image = ImgproxyImageField(imgproxy_options={'quality': 90})
+    bg_image = ImgproxyImageField(imgproxy_options={'quality': 90, 'width': 1920})
 
     class Meta:
         model = models.MainSettings
