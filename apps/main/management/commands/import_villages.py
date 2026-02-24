@@ -109,10 +109,13 @@ VILLAGES_DATA = [
 def _normalize(name: str) -> str:
     """Normalize a name for fuzzy matching."""
     s = name.lower().strip()
+    # Normalize all Unicode apostrophe variants to ASCII
+    for ch in "\u2018\u2019\u02bc\u02bb\u0060\u00b4":
+        s = s.replace(ch, "'")
     for suffix in ["turizm qishlog'i", "turizm mahallasi", "etno turizm qishlog'i"]:
         s = s.replace(suffix, "")
     s = s.strip()
-    s = re.sub(r"[^a-z0-9\u0400-\u04ff\u00e0-\u024f'ʼ]", " ", s)
+    s = re.sub(r"[^a-z0-9\u0400-\u04ff\u00e0-\u024f']", " ", s)
     s = re.sub(r"\s+", " ", s).strip()
     return s
 
@@ -157,14 +160,27 @@ def _find_village_folder(region_dir: Path, village_name: str):
             continue
         folder_norm = _normalize(sub.name)
 
+        # Exact match
         if folder_norm == target:
             return sub
 
+        # Contains match
         if target in folder_norm or folder_norm in target:
             score = len(folder_norm) + len(target)
             if score > best_score:
                 best_score = score
                 best_match = sub
+                continue
+
+        # Simple edit distance for short single-word names (handles typos)
+        if abs(len(folder_norm) - len(target)) <= 2 and len(target) >= 3:
+            diffs = sum(1 for a, b in zip(folder_norm, target) if a != b)
+            diffs += abs(len(folder_norm) - len(target))
+            if diffs <= 2:
+                score = len(target) * 10 - diffs
+                if score > best_score:
+                    best_score = score
+                    best_match = sub
 
     return best_match
 
