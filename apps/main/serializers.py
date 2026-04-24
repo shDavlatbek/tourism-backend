@@ -110,7 +110,12 @@ class VillageDetailSerializer(serializers.ModelSerializer):
 
 class MainSettingsSerializer(serializers.ModelSerializer):
     bg_image = ImgproxyImageField(imgproxy_options={'quality': 90, 'width': 1920})
+    logo = ImgproxyImageField(imgproxy_options={'quality': 90, 'width': 75})
 
     class Meta:
         model = models.MainSettings
-        fields = ('about_title', 'about_description', 'bg_image')
+        fields = (
+            'logo', 'title',
+            'about_title', 'about_description', 'bg_image',
+            'instagram_link', 'telegram_link', 'facebook_link', 'youtube_link',
+        )

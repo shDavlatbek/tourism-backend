@@ -241,18 +241,10 @@ class Command(BaseCommand):
         for row_idx, row in enumerate(VILLAGES_DATA, start=1):
             region, village_name, desc_uz, desc_ru, desc_en, act_uz, act_ru, act_en, location = row
 
-            # Parse activities into structured list
-            activities = []
+            # Parse activities into per-language lists
             act_uz_list = [a.strip() for a in act_uz.split(";") if a.strip()]
             act_ru_list = [a.strip() for a in act_ru.split(";") if a.strip()]
             act_en_list = [a.strip() for a in act_en.split(";") if a.strip()]
-            max_len = max(len(act_uz_list), len(act_ru_list), len(act_en_list))
-            for i in range(max_len):
-                activities.append({
-                    "uz": act_uz_list[i] if i < len(act_uz_list) else "",
-                    "ru": act_ru_list[i] if i < len(act_ru_list) else "",
-                    "en": act_en_list[i] if i < len(act_en_list) else "",
-                })
 
             lat, lng = _parse_location(location)
 
@@ -273,7 +265,9 @@ class Command(BaseCommand):
                     "description_en": desc_en,
                     "latitude": lat,
                     "longitude": lng,
-                    "activities": activities,
+                    "activities_uz": act_uz_list,
+                    "activities_ru": act_ru_list,
+                    "activities_en": act_en_list,
                     "order": row_idx,
                 },
             )
@@ -284,7 +278,9 @@ class Command(BaseCommand):
                 village.description_en = desc_en
                 village.latitude = lat
                 village.longitude = lng
-                village.activities = activities
+                village.activities_uz = act_uz_list
+                village.activities_ru = act_ru_list
+                village.activities_en = act_en_list
                 village.save()
 
             village_count += 1

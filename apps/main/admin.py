@@ -188,10 +188,13 @@ class CommentAdmin(SortableAdminMixinCustom, AdminTranslation):
 
 @admin.register(models.MainSettings)
 class MainSettingsAdmin(AdminTranslation):
-    list_display = ('about_title', 'updated_at')
+    list_display = ('title', 'about_title', 'updated_at')
     fieldsets = (
-        (_('Haqida'), {
-            'fields': ('about_title', 'about_description', 'bg_image'),
+        (_('Asosiy'), {
+            'fields': ('logo', 'title', 'about_title', 'about_description', 'bg_image'),
+        }),
+        (_('Ijtimoiy tarmoqlar'), {
+            'fields': ('instagram_link', 'telegram_link', 'facebook_link', 'youtube_link'),
         }),
     )
 

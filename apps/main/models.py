@@ -117,6 +117,13 @@ class Comment(BaseModel):
 # ──────────────────────────────────────────────
 
 class MainSettings(BaseModel):
+    logo = models.ImageField(
+        upload_to=generate_upload_path,
+        blank=True, null=True,
+        validators=[file_size],
+        verbose_name=_("Logo"),
+    )
+    title = models.CharField(max_length=255, blank=True, default="", verbose_name=_("Sarlavha"))
     about_title = models.CharField(max_length=255, blank=True, default="", verbose_name=_("Haqida sarlavha"))
     about_description = models.TextField(blank=True, default="", verbose_name=_("Haqida tavsif"))
     bg_image = models.ImageField(
@@ -125,6 +132,10 @@ class MainSettings(BaseModel):
         validators=[file_size],
         verbose_name=_("Fon rasmi"),
     )
+    instagram_link = models.URLField(max_length=500, blank=True, default="", verbose_name=_("Instagram havola"))
+    telegram_link = models.URLField(max_length=500, blank=True, default="", verbose_name=_("Telegram havola"))
+    facebook_link = models.URLField(max_length=500, blank=True, default="", verbose_name=_("Facebook havola"))
+    youtube_link = models.URLField(max_length=500, blank=True, default="", verbose_name=_("YouTube havola"))
 
     class Meta:
         verbose_name = _("Asosiy sozlamalar")

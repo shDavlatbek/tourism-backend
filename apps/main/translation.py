@@ -8,7 +8,7 @@ class CityTranslation(TranslationOptions):
 
 @register(models.Village)
 class VillageTranslation(TranslationOptions):
-    fields = ('name', 'short_description', 'description')
+    fields = ('name', 'short_description', 'description', 'activities')
 
 @register(models.Comment)
 class CommentTranslation(TranslationOptions):
@@ -20,4 +20,4 @@ class GalleryTranslation(TranslationOptions):
 
 @register(models.MainSettings)
 class MainSettingsTranslation(TranslationOptions):
-    fields = ('about_title', 'about_description')
+    fields = ('title', 'about_title', 'about_description')
